@@ -1,3 +1,5 @@
+import { InvalidCategoryDataException } from '../exceptions/category.exception';
+
 export class CategoryName {
   private constructor(
     private readonly nameEn: string,
@@ -12,16 +14,30 @@ export class CategoryName {
 
   private validate(): void {
     if (!this.nameEn || this.nameEn.trim().length === 0) {
-      throw new Error('English name cannot be empty');
+      throw new InvalidCategoryDataException('English name cannot be empty');
     }
     if (!this.nameAr || this.nameAr.trim().length === 0) {
-      throw new Error('Arabic name cannot be empty');
+      throw new InvalidCategoryDataException('Arabic name cannot be empty');
     }
     if (this.nameEn.length > 50) {
-      throw new Error('English name cannot be longer than 50 characters');
+      throw new InvalidCategoryDataException(
+        'English name cannot be longer than 50 characters',
+      );
     }
     if (this.nameAr.length > 50) {
-      throw new Error('Arabic name cannot be longer than 50 characters');
+      throw new InvalidCategoryDataException(
+        'Arabic name cannot be longer than 50 characters',
+      );
+    }
+    if (this.nameEn.trim().length < 3) {
+      throw new InvalidCategoryDataException(
+        'English name must be at least 3 characters long',
+      );
+    }
+    if (this.nameAr.trim().length < 3) {
+      throw new InvalidCategoryDataException(
+        'Arabic name must be at least 3 characters long',
+      );
     }
   }
 

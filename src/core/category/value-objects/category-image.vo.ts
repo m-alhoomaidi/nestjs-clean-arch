@@ -1,3 +1,5 @@
+import { InvalidCategoryDataException } from '../exceptions/category.exception';
+
 export class CategoryImage {
   private constructor(private readonly url: string) {
     this.validate();
@@ -9,13 +11,13 @@ export class CategoryImage {
 
   private validate(): void {
     if (!this.url || this.url.trim().length === 0) {
-      throw new Error('Image URL cannot be empty');
+      throw new InvalidCategoryDataException('Image URL cannot be empty');
     }
 
     try {
       new URL(this.url);
     } catch {
-      throw new Error('Invalid image URL');
+      throw new InvalidCategoryDataException('Invalid image URL');
     }
   }
 
