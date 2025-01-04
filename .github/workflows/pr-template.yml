@@ -1,0 +1,40 @@
+name: PR Template Selector
+
+on:
+  pull_request:
+    types: [opened, reopened]
+
+jobs:
+  select-template:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set PR Template
+        run: |
+          # Get branch name
+          BRANCH_NAME="${{ github.head_ref }}"
+
+          # Define template path based on branch prefix
+          if [[ $BRANCH_NAME == feat/* ]]; then
+            TEMPLATE_PATH=".github/pull_request_template/feat.md"
+          elif [[ $BRANCH_NAME == fix/* ]]; then
+            TEMPLATE_PATH=".github/pull_request_template/fix.md"
+          elif [[ $BRANCH_NAME == test/* ]]; then
+            TEMPLATE_PATH=".github/pull_request_template/test.md"
+          elif [[ $BRANCH_NAME == docs/* ]]; then
+            TEMPLATE_PATH=".github/pull_request_template/docs.md"
+          else
+            echo "No matching template for branch prefix"
+            exit 0
+          fi
+
+          # Read template content
+          TEMPLATE_CONTENT=$(cat $TEMPLATE_PATH)
+
+          # Update PR description using GitHub API
+          curl -X PATCH \
+            -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+            -H "Accept: application/vnd.github.v3+json" \
+            "https://api.github.com/repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}" \
+            -d "{\"body\":$(echo "$TEMPLATE_CONTENT" | jq -R -s .)}"
