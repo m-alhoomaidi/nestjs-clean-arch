@@ -7,4 +7,7 @@ export interface ICategoryRepository {
   create(category: Category): Promise<Category>;
   update(category: Category): Promise<Category>;
   delete(id: number): Promise<void>;
+  existsByNameEn(nameEn: string, excludeId?: number): Promise<boolean>;
+  existsByNameAr(nameAr: string, excludeId?: number): Promise<boolean>;
+  existsBySlug(slug: string, excludeId?: number): Promise<boolean>;
 }
